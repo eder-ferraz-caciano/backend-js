@@ -10,12 +10,14 @@ module.exports = app => {
   const { hookDelete } = app.src.middleware.knexHook;
 
   const SaveValidate = {
-    name: { presence: { allowEmpty: false } },
-    description: { presence: { allowEmpty: false } }
+    user_id: { presence: { allowEmpty: false } },
+    screen_id: { presence: { allowEmpty: false } }
   };
-  const onList = async (req, res) => {
+  // listar usuários da tela
+  const onListScreenUser = async (req, res) => {
     try {
-      const findAllScreen = await app.db('screen')
+      const findAllUserOfScreen = await app.db('user')
+      .join('')
       .column(
         'id',
         'name',
@@ -23,14 +25,24 @@ module.exports = app => {
       )
       .select()
       .where({
+        screen_id: req.params.id,
         deleted_at: null
       });
   
-      return res.json({ registros: findAllScreen });
+      return res.json({ registros: findAllUserOfScreen });
     } catch (error) {
       return res.json({ erro: error });
     }
   };
+
+  //listar telas do usuário
+  const onListUserScreen = async (req, res) => {
+    try {
+      //
+    } catch (error) {
+      return res.json({});
+    }
+  }
 
   const onSave = async (req, res) => {
     let erro = validate(req.body, SaveValidate);

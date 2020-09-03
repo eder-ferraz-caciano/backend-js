@@ -1,6 +1,8 @@
 # backend-js
 This is an example of a basic backend application in Java Script.
 
+---
+
 ### Install
  > yarn
 
@@ -15,3 +17,5 @@ This is an example of a basic backend application in Java Script.
 
 ### Start Production
  > yarn start
+
+ ---
