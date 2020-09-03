@@ -1,72 +1,70 @@
-const jwt = require('jwt-simple')
-const validate = require('validate.js')
+/* eslint-disable no-undef */
+const jwt = require('jwt-simple');
+const validate = require('validate.js');
 
 
 module.exports = app => {
-  const { seExiste, seAtivo } = app.api.validations
+  const userValidate = {
+    login: { presence: { allowEmpty: false } },
+    password: { presence: { allowEmpty: false } }
+  };
 
-  const usuarioValidar = {
-    login: { presence: { allowEmpty: false, message: '^Login de usuário não informado.' } },
-    password: { presence: { allowEmpty: false, message: '^Senha de usuário não informada.' } }
-  }
-
-  const signin = async (req, res) => {
-    const userBody = { ...req.body }
-
-    const erros = validate(userBody, usuarioValidar)
-    if (erros) return res.json({erro: erros})
+  const login = async (req, res) => {
+    const erros = validate(req.body, userValidate);
+    if (erros) return res.json({ erro: erros });
 
     try {
-      const user = await app.db('system_user')
-        .where({ login: req.body.login })
-        .first()
+      const user = {...req.body};
+      user.login = req.body.login.toUpperCase();
 
-      seExiste(user, 'Usuário não encontrado')
-      seAtivo(user.active, 'Usuário desativado. Contate o administrador do sistema!')
+      const findUser = await app.db('user')
+      .where({
+        login: user.login,
+        password: user.password
+      })
+      .first();
 
-      const now = Math.floor(Date.now() / 1000)
+      if (!findUser) return res.json({ erro: 'User not found!' });
 
-      seExiste(req.body.password, 'Usuário ou senha incorreto.')
-      if (String(req.body.password) !== String(user.password)) {
-        return res.json({
-          erro: 'Usuário ou senha Incorretos.',
-          aviso: 'Tente novamente.'
-        })
+      if (String(req.body.password) !== String(findUser.password)) {
+        return res.json({ erro: 'User or password not found!' });
       }
+
+      const now = Math.floor(Date.now() / 1000);
+      console.log(now);
 
       const payload = {
-        id: user.id,
-        name: user.name,
-        login: user.login,
-        email: user.email,
-        active: user.active,
+        id: findUser.id,
+        name: findUser.name,
+        login: findUser.login,
+        email: findUser.email,
         iat: now,
         exp: now + (60 * 60 * 24)
-      }
+      };
 
       res.json({
         ...payload,
         token: jwt.encode(payload, process.env.APP_KEY)
-      })
+      });
     } catch (error) {
-      res.send({ aviso: 'Erro na requisição.', erro: error })
+      res.send({ aviso: 'Request error.', erro: error });
     }
-  }
+  };
 
   const validateToken = async (req, res) => {
-    const userData = req.body || null
+    const userData = req.body || null;
     try {
       if (userData) {
-        const token = jwt.decode(userData.token, process.env.APP_KEY)
+        const token = jwt.decode(userData.token, process.env.APP_KEY);
         if (new Date(token.exp * 1000) > new Date()) {
-          return res.send(true)
+          return res.send(true);
         }
       }
     } catch (error) {
-
+      return res.json({ erro: error });
     }
-    res.send(false)
-  }
+    res.send(false);
+  };
 
-  return { signin, validateToken }
-}
+  return { login, validateToken };
+};

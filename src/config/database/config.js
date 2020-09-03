@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = {
     client: process.env.DB_DIALECT,
     connection: {
