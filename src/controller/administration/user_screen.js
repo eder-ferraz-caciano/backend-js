@@ -16,33 +16,39 @@ module.exports = app => {
   // listar usuários da tela
   const onListScreenUser = async (req, res) => {
     try {
-      const findAllUserOfScreen = await app.db('user')
-      .join('')
-      .column(
-        'id',
-        'name',
-        'description'
+      await app.db
+      .select(
+        'user_screen.id',
+        'user.id as userId',
+        'user.name as userName',
+        'user.login as userLogin',
+        'screen.name as screenName',
+        'screen.description as screenDescription'
       )
-      .select()
+      .from('user_screen')
+      .leftJoin('screen', 'screen.id', 'user_screen.screen_id')
+      .leftJoin('user', 'user.id', 'user_screen.user_id')
       .where({
-        screen_id: req.params.id,
-        deleted_at: null
-      });
-  
-      return res.json({ registros: findAllUserOfScreen });
+        'user_screen.user_id': req.params.screenId,
+        'user_screen.deleted_at': null,
+        'screen.deleted_at': null,
+        'screen.deleted_at': null
+      })
+      .then (resp => res.json({ registros: resp }))
+      .catch( err => res.json({ registros: err }))
     } catch (error) {
       return res.json({ erro: error });
     }
   };
 
   //listar telas do usuário
-  const onListUserScreen = async (req, res) => {
-    try {
-      //
-    } catch (error) {
-      return res.json({});
-    }
-  }
+  // const onListUserScreen = async (req, res) => {
+  //   try {
+  //     //
+  //   } catch (error) {
+  //     return res.json({});
+  //   }
+  // }
 
   const onSave = async (req, res) => {
     let erro = validate(req.body, SaveValidate);
@@ -106,7 +112,7 @@ module.exports = app => {
   };
 
   return {
-    onList,
+    onListScreenUser,
     onSave,
     onDelete
   };

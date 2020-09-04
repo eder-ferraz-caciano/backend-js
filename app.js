@@ -47,6 +47,7 @@ consign()
   .then('./src/controller/administration/user.js')
   .then('./src/controller/administration/screen.js')
   .then('./src/controller/administration/request_screen.js')
+  .then('./src/controller/administration/user_screen.js')
   .then('./src/routes/')
   .into(app);
 
