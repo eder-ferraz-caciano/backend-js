@@ -7,7 +7,7 @@ const validate = require('validate.js');
  * @param {this} app
  */
 module.exports = app => {
-  const { hookUpdate, hookDelete } = app.src.middleware.knexHook;
+  const { hookCreate, hookUpdate, hookDelete } = app.src.middleware.knexHook;
 
   const SaveValidate = {
     screen_id: { presence: { allowEmpty: false, numericality: true } },
@@ -77,8 +77,9 @@ module.exports = app => {
 
     try {
       let screen = { ...req.body };
-      screen.note = screen.note ? screen.note.toUpperCase() : '';
+      screen.note        = screen.note ? screen.note.toUpperCase() : '';
       screen.description = screen.description ? screen.description.toUpperCase() : '';
+      hookCreate(screen);
 
       const findScreen = await app.db('screen')
       .where({
@@ -118,7 +119,6 @@ module.exports = app => {
       let screen = { ...req.body };
       screen.note = screen.note ? screen.note.toUpperCase() : '';
       screen.description = screen.description ? screen.description.toUpperCase() : '';
-
       hookUpdate(screen);
 
       const findScreen = await app.db('screen')

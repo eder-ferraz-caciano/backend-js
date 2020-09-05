@@ -1,4 +1,5 @@
 const validate = require('validate.js');
+const { json } = require('body-parser');
 
 /**
  * @author Eder Ferraz Caciano
@@ -7,21 +8,20 @@ const validate = require('validate.js');
  * @param {this} app
  */
 module.exports = app => {
-  const { hookDelete } = app.src.middleware.knexHook;
+  const { hookCreate, hookDelete } = app.src.middleware.knexHook;
 
   const SaveValidate = {
     user_id: { presence: { allowEmpty: false } },
     screen_id: { presence: { allowEmpty: false } }
   };
+
   // listar usuários da tela
-  const onListScreenUser = async (req, res) => {
+  const onListScreensOfUser = async (req, res) => {
     try {
       await app.db
       .select(
         'user_screen.id',
         'user.id as userId',
-        'user.name as userName',
-        'user.login as userLogin',
         'screen.name as screenName',
         'screen.description as screenDescription'
       )
@@ -29,7 +29,7 @@ module.exports = app => {
       .leftJoin('screen', 'screen.id', 'user_screen.screen_id')
       .leftJoin('user', 'user.id', 'user_screen.user_id')
       .where({
-        'user_screen.user_id': req.params.screenId,
+        'user_screen.user_id': req.params.userId,
         'user_screen.deleted_at': null,
         'screen.deleted_at': null,
         'screen.deleted_at': null
@@ -42,41 +42,73 @@ module.exports = app => {
   };
 
   //listar telas do usuário
-  // const onListUserScreen = async (req, res) => {
-  //   try {
-  //     //
-  //   } catch (error) {
-  //     return res.json({});
-  //   }
-  // }
+  const onListUsersOfScreen = async (req, res) => {
+    try {
+      await app.db
+      .select(
+        'user_screen.id',
+        'screen.id as screenId',
+        'user.id as userId',
+        'user.name as userName',
+        'user.login as userLogin'
+      )
+      .from('user_screen')
+      .leftJoin('screen', 'screen.id', 'user_screen.screen_id')
+      .leftJoin('user', 'user.id', 'user_screen.user_id')
+      .where({
+        'user_screen.screen_id': req.params.screenId,
+        'user_screen.deleted_at': null,
+        'screen.deleted_at': null,
+        'screen.deleted_at': null
+      })
+      .then (resp => res.json({ registros: resp }))
+      .catch( err => res.json({ registros: err }))
+    } catch (error) {
+      return res.json({ erro: error });
+    }
+  };
 
   const onSave = async (req, res) => {
     let erro = validate(req.body, SaveValidate);
     if (erro) return res.json({ erro: erro });
 
     try {
-      let screen = { ...req.body };
-      screen.name = screen.name ? screen.name.toUpperCase() : '';
-      screen.description = screen.description ? screen.description.toUpperCase() : '';
+      let screenUser = { };
+      screenUser.user_id   = req.body.user_id ? Number(req.body.user_id) : undefined
+      screenUser.screen_id = req.body.screen_id ? Number(req.body.screen_id) : undefined
+      hookCreate(screenUser);
 
-      const findScreen = await app.db('screen')
+      const findUser = await app.db('user')
       .where({
-        name: screen.name,
+        id: screenUser.user_id,
+        deleted_at: null
+      });
+      if (findUser && !findUser.length) return res,json({ erro: 'User not found!'});
+
+      const findScreen = await app.db(screen)
+      .where({
+        id: screenUser.screen_id,
+        deleted_at: null
+      });
+      if (findScreen && !findScreen.length) return res,json({ erro: 'Screen not found!'});
+
+      const findRelationship = await app.db('user_screen')
+      .where({
+        user_id: screenUser.user_id,
+        screen_id: screenUser.screen_id,
         deleted_at: null
       });
       
-      if (findScreen && findScreen.length) {
-        return res.json({
-          erro: `Screen already registered!`
-        });
+      if (findRelationship && findRelationship.length) {
+        return res.json({ erro: `User already has this screen!` });
       }
 
-      const response = await app.db('screen')
+      const response = await app.db('user_screen')
       .insert({
-        ...screen
+        ...screenUser
       });
 
-      return res.json({ message: 'Screen successfully inserted', screenId: response[0] });
+      return res.json({ message: 'Screen inserted for the user successfull!', screenId: response[0] });
     } catch (error) {
       return res.json({ erro: error });
     }
@@ -84,7 +116,7 @@ module.exports = app => {
 
   const onDelete = async (req, res) => {
     try {
-      let userScreen = req.params.id;
+      let userScreen = { id: req.params.id };
       hookDelete(userScreen);
 
       const findUserScreen = await app.db('user_screen')
@@ -99,7 +131,7 @@ module.exports = app => {
       await app.db('user_screen')
       .where({
         deleted_at: null,
-        id: req.params.id
+        id: userScreen.id
       })
       .update({
         ...userScreen
@@ -112,7 +144,8 @@ module.exports = app => {
   };
 
   return {
-    onListScreenUser,
+    onListScreensOfUser,
+    onListUsersOfScreen,
     onSave,
     onDelete
   };

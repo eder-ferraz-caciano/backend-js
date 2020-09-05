@@ -92,9 +92,9 @@ module.exports = app => {
 
     try {
       let user = { ...req.body };
-      user.login = user.login.toUpperCase();
-      user.email = user.email ? user.email : '';
-      user.password = user.password ? String(criptografarSenha(user.password)) : null;
+      user.login      = user.login.toUpperCase();
+      user.email      = user.email ? user.email : '';
+      user.password   = user.password ? String(criptografarSenha(user.password)) : null;
       user.created_by = user.login;
       user.created_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       delete user.confirmPassword;
@@ -129,13 +129,12 @@ module.exports = app => {
 
     try {
       let user = { ...req.body };
-      user.login = user.login.toUpperCase();
-      user.email = user.email ? user.email : '';
-      user.password = user.password ? String(criptografarSenha(user.password)) : null;
+      user.login      = user.login.toUpperCase();
+      user.email      = user.email ? user.email : '';
+      user.password   = user.password ? String(criptografarSenha(user.password)) : null;
       user.created_by = user.login;
       user.created_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       delete user.confirmPassword;
-
       hookUpdate(user);
       
       const findUser = await app.db('user')
