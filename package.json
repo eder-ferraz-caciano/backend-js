@@ -8,9 +8,9 @@
     "dev": "DEBUG=express:* nodemon",
     "production": "pm2 start app.js --name testeServerEder",
     "test": "jest",
-    "lint": "eslint src/** --fix",
+    "lint": "eslint src/** app.js --fix",
     "secure-mode": "jest --watch --verbose=true",
-    "migrate": "cd config/database && knex migrate:latest"
+    "migrate": "cd src/config/database && knex migrate:latest"
   },
   "author": "",
   "license": "ISC",
@@ -34,6 +34,6 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
-    "eslint": "^7.8.0"
+    "eslint": "^7.13.0"
   }
 }

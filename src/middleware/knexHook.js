@@ -1,28 +1,36 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 module.exports = app => {
-  const { userToken } = app.src.helpers.usuario;
 
-  function hookUpdate(dados, req) {
-    dados.updated_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    dados.updated_by = req ? userToken(req).name : 'system';
+    const { userToken } = app.src.helpers.usuario;
 
-    return dados;
-  }
+    function hookUpdate(dados, req) {
 
-  function hookCreate(dados, req) {
-    dados.created_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    dados.created_by = req ? userToken(req).name : 'system';
+        dados.updated_at = dayjs().format("YYYY-MM-DD HH:mm:ss");
+        dados.updated_by = req ? userToken(req).name : "system";
 
-    return dados;
-  }
+        return dados;
+    
+    }
 
-  function hookDelete(dados, req) {
-    dados.deleted_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    dados.deleted_by = req ? userToken(req).name : 'system';
+    function hookCreate(dados, req) {
 
-    return dados;
-  }
+        dados.created_at = dayjs().format("YYYY-MM-DD HH:mm:ss");
+        dados.created_by = req ? userToken(req).name : "system";
 
-  return { hookUpdate, hookCreate, hookDelete };
+        return dados;
+    
+    }
+
+    function hookDelete(dados, req) {
+
+        dados.deleted_at = dayjs().format("YYYY-MM-DD HH:mm:ss");
+        dados.deleted_by = req ? userToken(req).name : "system";
+
+        return dados;
+    
+    }
+
+    return { hookCreate, hookDelete, hookUpdate };
+
 };

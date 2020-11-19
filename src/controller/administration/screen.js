@@ -1,4 +1,4 @@
-const validate = require('validate.js');
+const validate = require("validate.js");
 
 /**
  * @author Eder Ferraz Caciano
@@ -7,172 +7,214 @@ const validate = require('validate.js');
  * @param {this} app
  */
 module.exports = app => {
-  const { hookCreate, hookUpdate, hookDelete } = app.src.middleware.knexHook;
 
-  const SaveValidate = {
-    name: { presence: { allowEmpty: false } },
-    description: { presence: { allowEmpty: false } }
-  };
-  const EditValidate = {
-    id: { presence: { allowEmpty: false, numericality: true } },
-    ...SaveValidate
-  };
+    const { hookCreate, hookUpdate, hookDelete } = app.src.middleware.knexHook;
 
-  const onList = async (req, res) => {
-    try {
-      const findAllScreen = await app.db('screen')
-      .column(
-        'id',
-        'name',
-        'description'
-      )
-      .select()
-      .where({
-        deleted_at: null
-      });
+    const SaveValidate = {
+        description: { presence: { allowEmpty: false } },
+        name: { presence: { allowEmpty: false } },
+        url: { presence: { allowEmpty: false } }
+    };
+    const EditValidate = {
+        id: { presence: { allowEmpty: false, numericality: true } },
+        ...SaveValidate
+    };
+
+    const onList = async (_req, res) => {
+
+        try {
+
+            const findAllScreen = await app.db("screen")
+                .column(
+                    "id",
+                    "name",
+                    "description",
+                    "url",
+                    "icon",
+                    "order",
+                    "icon_color"
+                )
+                .select()
+                .where({
+                    deleted_at: null
+                });
   
-      return res.json({ registros: findAllScreen });
-    } catch (error) {
-      return res.json({ erro: error });
-    }
-  };
+            return res.json({ registros: findAllScreen });
 
-  const onView = async (req, res) => {
-    try {
-      if (!req.params.id) return res.json({ erro: 'Uninformed screen!' });
+        } catch (error) {
 
-      const findScrenn = await app.db('screen')
-      .column(
-        'id',
-        'name',
-        'description'
-      )
-      .select()
-      .where({
-        id: req.params.id,
-        deleted_at: null
-      });
+            return res.json({ erro: error });
 
-      if (findScrenn && !findScrenn.length) return res.json({ erro: 'Screen not found!' });
+        }
+    };
 
-      return res.json({ ...findScrenn[0] });
-    } catch (error) {
-      return res.json({ erro: error });
-    }
-  };
+    const onView = async (req, res) => {
 
-  const onSave = async (req, res) => {
-    let erro = validate(req.body, SaveValidate);
-    if (erro) return res.json({ erro: erro });
+        try {
 
-    try {
-      let screen = { ...req.body };
-      screen.name = screen.name ? screen.name.toUpperCase() : '';
-      screen.description = screen.description ? screen.description.toUpperCase() : '';
-      hookCreate(screen);
+            if (!req.params.id) return res.json({ erro: "Uninformed screen!" });
 
-      const findScreen = await app.db('screen')
-      .where({
-        name: screen.name,
-        deleted_at: null
-      });
+            const findScren = await app.db("screen")
+                .column(
+                    "id",
+                    "name",
+                    "description",
+                    "url",
+                    "icon",
+                    "order",
+                    "icon_color"
+                )
+                .select()
+                .where({
+                    deleted_at: null,
+                    id: req.params.id
+                });
+
+            if (findScren && !findScren.length) return res.json({ erro: "Screen not found!" });
+
+            return res.json({ ...findScren[0] });
+
+        } catch (error) {
+
+            return res.json({ erro: error });
+        }
+    };
+
+    const onSave = async (req, res) => {
+
+        let erro = validate(req.body, SaveValidate);
+        if (erro) return res.json({ erro: erro });
+
+        try {
+
+            let screen = { ...req.body };
+            screen.name = screen.name ? screen.name.toUpperCase() : "";
+            screen.description = screen.description ? screen.description.toUpperCase() : "";
+            hookCreate(screen);
+
+            const findScreen = await app.db("screen")
+                .where({
+                    deleted_at: null,
+                    name: screen.name
+                });
+
+            if (findScreen && findScreen.length) {
+
+                return res.json({
+                    erro: "Screen already registered!"
+                });
+            
+            }
+
+            const response = await app.db("screen")
+                .insert({
+                    ...screen
+                });
+
+            return res.json({ message: "Screen successfully inserted", screenId: response[0] });
+        
+        } catch (error) {
+
+            return res.json({ erro: error });
+        
+        }
+    
+    };
+
+    const onEdit = async (req, res) => {
+
+        let erro = validate(req.body, EditValidate);
+        if (erro) return res.json({ erro: erro });
+
+        try {
+
+            let screen = { ...req.body };
+            screen.name        = screen.name ? screen.name.toUpperCase() : "";
+            screen.description = screen.description ? screen.description.toUpperCase() : "";
+            hookUpdate(screen);
       
-      if (findScreen && findScreen.length) {
-        return res.json({
-          erro: `Screen already registered!`
-        });
-      }
-
-      const response = await app.db('screen')
-      .insert({
-        ...screen
-      });
-
-      return res.json({ message: 'Screen successfully inserted', screenId: response[0] });
-    } catch (error) {
-      return res.json({ erro: error });
-    }
-  };
-
-  const onEdit = async (req, res) => {
-    let erro = validate(req.body, EditValidate);
-    if (erro) return res.json({ erro: erro });
-
-    try {
-      let screen = { ...req.body };
-      screen.name        = screen.name ? screen.name.toUpperCase() : '';
-      screen.description = screen.description ? screen.description.toUpperCase() : '';
-      hookUpdate(screen);
+            const findScreen = await app.db("screen")
+                .where({
+                    deleted_at: null,
+                    id: screen.id
+                });
       
-      const findScreen = await app.db('screen')
-      .where({
-        id: screen.id,
-        deleted_at: null
-      });
-      
-      if (findScreen && !findScreen.length) return res.json({ erro: 'Screen not found!' });
+            if (findScreen && !findScreen.length) return res.json({ erro: "Screen not found!" });
 
-      const response = await app.db('screen')
-      .where({
-        deleted_at: null,
-        id: screen.id
-      })
-      .update({
-        ...screen
-      });
+            const response = await app.db("screen")
+                .where({
+                    deleted_at: null,
+                    id: screen.id
+                })
+                .update({
+                    ...screen
+                });
 
-      return res.json({ message: 'Screen successfully inserted', screenId: response[0] });
-    } catch (error) {
-      return res.json({ erro: error });
-    }
-  };
+            return res.json({ message: "Screen successfully inserted", screenId: response[0] });
+        
+        } catch (error) {
 
-  const onDelete = async (req, res) => {
-    try {
-      if (!req.params.id) return res.json({ erro: 'Uninformed screen!' });
+            return res.json({ erro: error });
+        
+        }
+    
+    };
 
-      let screen = { id: req.params.id };
-      hookDelete(screen);
+    const onDelete = async (req, res) => {
 
-      const findScreen = await app.db('screen')
-      .where({
-        deleted_at: null,
-        id: req.params.id
-      });
-      if (findScreen && !findScreen.length) {
-        return res.json({ erro: 'Screen not found!' });
-      }
+        try {
 
-      await app.db('request_screen')
-      .where({
-        'request_screen.screen_id': req.params.id,
-        deleted_at: null
-      })
-      .update({
-        deleted_at: screen.deleted_at,
-        deleted_by: screen.deleted_by
-      });
+            if (!req.params.id) return res.json({ erro: "Uninformed screen!" });
 
-      await app.db('screen')
-      .where({
-        deleted_at: null,
-        id: req.params.id
-      })
-      .update({
-        ...screen
-      });
+            let screen = { id: req.params.id };
+            hookDelete(screen);
 
-      return res.json({ message: 'Deleted screen!' });
-    } catch (error) {
-      return res.json({ erro: error });
-    }
-  };
+            const findScreen = await app.db("screen")
+                .where({
+                    deleted_at: null,
+                    id: req.params.id
+                });
+            if (findScreen && !findScreen.length) {
 
-  return {
-    onList,
-    onView,
-    onEdit,
-    onSave,
-    onDelete
-  };
+                return res.json({ erro: "Screen not found!" });
+            
+            }
+
+            await app.db("request_screen")
+                .where({
+                    deleted_at: null,
+                    "request_screen.screen_id": req.params.id
+                })
+                .update({
+                    deleted_at: screen.deleted_at,
+                    deleted_by: screen.deleted_by
+                });
+
+            await app.db("screen")
+                .where({
+                    deleted_at: null,
+                    id: req.params.id
+                })
+                .update({
+                    ...screen
+                });
+
+            return res.json({ message: "Deleted screen!" });
+        
+        } catch (error) {
+
+            return res.json({ erro: error });
+        
+        }
+    
+    };
+
+    return {
+        onDelete,
+        onEdit,
+        onList,
+        onSave,
+        onView
+    };
+
 };

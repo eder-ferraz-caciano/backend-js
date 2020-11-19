@@ -1,18 +1,19 @@
+const dotenv = require("dotenv");
+const env = dotenv.config({ path: "../../../.env" }).parsed;
 
 module.exports = {
-
-    client: "mysql",
+    client: env.DB_DIALECT,
     connection: {
-        database: "admintemplate",
-        user: "root",
-        password: "1adsk2js5m",
-    },
-    pool: {
-        min: 2,
-        max: 10,
+        database: env.DB_DATABASE,
+        host: env.DB_HOST,
+        password: env.DB_PASSWORD,
+        user: env.DB_USERNAME
     },
     migrations: {
-        tableName: "knex_migrations",
+        tableName: "knex_migrations"
     },
-
+    pool: {
+        max: 10,
+        min: 2
+    }
 };

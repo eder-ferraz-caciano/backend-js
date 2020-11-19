@@ -1,26 +1,12 @@
-CREATE TABLE `request_screen` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `screen_id` INT(11) NOT NULL,
-    `description` VARCHAR(100) DEFAULT NULL,
-    `url` VARCHAR(250) DEFAULT NULL,
-    `note` VARCHAR(250) DEFAULT NULL,
-    `created_by` VARCHAR(45) DEFAULT NULL,
-    `created_at` DATETIME DEFAULT NULL,
-    `updated_by` VARCHAR(45) DEFAULT NULL,
-    `updated_at` DATETIME DEFAULT NULL,
-    `deleted_by` VARCHAR(45) DEFAULT NULL,
-    `deleted_at` DATETIME DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    KEY `fk_screen_id` (`screen_id`),
-    CONSTRAINT `fk_screen_id` FOREIGN KEY (`screen_id`)
-        REFERENCES `screen` (`id`)
-        ON DELETE CASCADE
-)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
 
 CREATE TABLE `screen` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(45) DEFAULT NULL,
     `description` VARCHAR(250) DEFAULT NULL,
+    `url` VARCHAR(250) DEFAULT NULL,
+    `icon` VARCHAR(100) DEFAULT NULL,
+    `order` VARCHAR(4) DEFAULT NULL,
+    `icon_color` VARCHAR(25) DEFAULT NULL,
     `created_by` VARCHAR(45) DEFAULT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `updated_by` VARCHAR(45) DEFAULT NULL,
@@ -70,3 +56,42 @@ CREATE TABLE `user_screen` (
         ON DELETE NO ACTION ON UPDATE NO ACTION
 )  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
 
+CREATE TABLE `request_screen` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `screen_id` INT(11) NOT NULL,
+    `description` VARCHAR(100) DEFAULT NULL,
+    `url` VARCHAR(250) DEFAULT NULL,
+    `note` VARCHAR(250) DEFAULT NULL,
+    `created_by` VARCHAR(45) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT NULL,
+    `updated_by` VARCHAR(45) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `deleted_by` VARCHAR(45) DEFAULT NULL,
+    `deleted_at` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_screen_id` (`screen_id`),
+    CONSTRAINT `fk_screen_id` FOREIGN KEY (`screen_id`)
+        REFERENCES `screen` (`id`)
+        ON DELETE CASCADE
+)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
+
+CREATE TABLE `user_request` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL,
+    `request_id` INT(11) NOT NULL,
+    `created_by` VARCHAR(45) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT NULL,
+    `updated_by` VARCHAR(45) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `deleted_by` VARCHAR(45) DEFAULT NULL,
+    `deleted_at` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `request_id` (`request_id`),
+    KEY `user_id` (`user_id`),
+    CONSTRAINT `request_id` FOREIGN KEY (`request_id`)
+        REFERENCES `request_screen` (`id`)
+        ON DELETE NO ACTION ON UPDATE NO ACTION,
+    CONSTRAINT `user_id` FOREIGN KEY (`user_id`)
+        REFERENCES `user` (`id`)
+        ON DELETE NO ACTION ON UPDATE NO ACTION
+)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
