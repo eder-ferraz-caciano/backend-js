@@ -26,6 +26,7 @@ CREATE TABLE `user` (
     `url_photograph` VARCHAR(250) DEFAULT NULL,
     `telephone` VARCHAR(45) DEFAULT NULL,
     `theme` LONGTEXT DEFAULT NULL,
+
     `created_by` VARCHAR(45) DEFAULT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `updated_by` VARCHAR(45) DEFAULT NULL,
@@ -39,6 +40,7 @@ CREATE TABLE `user_screen` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
     `screen_id` INT(11) NOT NULL,
+
     `created_by` VARCHAR(45) DEFAULT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `updated_by` VARCHAR(45) DEFAULT NULL,
@@ -62,6 +64,7 @@ CREATE TABLE `request_screen` (
     `description` VARCHAR(100) DEFAULT NULL,
     `url` VARCHAR(250) DEFAULT NULL,
     `note` VARCHAR(250) DEFAULT NULL,
+
     `created_by` VARCHAR(45) DEFAULT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `updated_by` VARCHAR(45) DEFAULT NULL,
@@ -79,6 +82,7 @@ CREATE TABLE `user_request` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
     `request_id` INT(11) NOT NULL,
+    
     `created_by` VARCHAR(45) DEFAULT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `updated_by` VARCHAR(45) DEFAULT NULL,

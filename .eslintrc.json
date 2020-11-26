@@ -1,6 +1,6 @@
 {
     "env": {
-        "browser": true,
+        "browser": false,
         "commonjs": true,
         "es2021": true
     },
@@ -32,7 +32,7 @@
             "error",
             "1tbs"
         ],
-        "callback-return": "error",
+        "callback-return": "off",
         "capitalized-comments": [
             "error",
             "never"

@@ -21,9 +21,7 @@ module.exports = app => {
     };
 
     const onList = async (_req, res) => {
-
         try {
-
             const findAllScreen = await app.db("screen")
                 .column(
                     "id",
@@ -38,20 +36,15 @@ module.exports = app => {
                 .where({
                     deleted_at: null
                 });
-  
+
             return res.json({ registros: findAllScreen });
-
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
     };
 
     const onView = async (req, res) => {
-
         try {
-
             if (!req.params.id) return res.json({ erro: "Uninformed screen!" });
 
             const findScren = await app.db("screen")
@@ -73,9 +66,7 @@ module.exports = app => {
             if (findScren && !findScren.length) return res.json({ erro: "Screen not found!" });
 
             return res.json({ ...findScren[0] });
-
         } catch (error) {
-
             return res.json({ erro: error });
         }
     };
@@ -86,7 +77,6 @@ module.exports = app => {
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let screen = { ...req.body };
             screen.name = screen.name ? screen.name.toUpperCase() : "";
             screen.description = screen.description ? screen.description.toUpperCase() : "";
@@ -99,11 +89,9 @@ module.exports = app => {
                 });
 
             if (findScreen && findScreen.length) {
-
                 return res.json({
                     erro: "Screen already registered!"
                 });
-            
             }
 
             const response = await app.db("screen")
@@ -112,13 +100,9 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Screen successfully inserted", screenId: response[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onEdit = async (req, res) => {
@@ -127,18 +111,17 @@ module.exports = app => {
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let screen = { ...req.body };
             screen.name        = screen.name ? screen.name.toUpperCase() : "";
             screen.description = screen.description ? screen.description.toUpperCase() : "";
             hookUpdate(screen);
-      
+
             const findScreen = await app.db("screen")
                 .where({
                     deleted_at: null,
                     id: screen.id
                 });
-      
+
             if (findScreen && !findScreen.length) return res.json({ erro: "Screen not found!" });
 
             const response = await app.db("screen")
@@ -151,19 +134,13 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Screen successfully inserted", screenId: response[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onDelete = async (req, res) => {
-
         try {
-
             if (!req.params.id) return res.json({ erro: "Uninformed screen!" });
 
             let screen = { id: req.params.id };
@@ -175,9 +152,7 @@ module.exports = app => {
                     id: req.params.id
                 });
             if (findScreen && !findScreen.length) {
-
                 return res.json({ erro: "Screen not found!" });
-            
             }
 
             await app.db("request_screen")
@@ -200,13 +175,9 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Deleted screen!" });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     return {
@@ -216,5 +187,4 @@ module.exports = app => {
         onSave,
         onView
     };
-
 };

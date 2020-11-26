@@ -11,13 +11,11 @@ module.exports = app => {
     };
 
     const strategy = new Strategy(params, async (payload, done) => {
-
         await app.db("user")
             .where({ id: payload.id })
             .first()
             .then(user => done(null, user ? { ...payload } : false))
             .catch(err => done(err, false));
-    
     });
 
     passport.use(strategy);
@@ -25,5 +23,4 @@ module.exports = app => {
     return {
         authenticate: () => passport.authenticate("jwt", { session: false })
     };
-
 };

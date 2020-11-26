@@ -19,7 +19,6 @@ module.exports = app => {
     const onListRequestOfUser = async (req, res) => {
 
         try {
-
             await app.db
                 .select(
                     "user_request.id",
@@ -40,21 +39,17 @@ module.exports = app => {
                 })
                 .then (resp => res.json({ registros: resp }))
                 .catch( err => res.json({ registros: err }));
-        
+
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
     };
 
     const onSave = async (req, res) => {
-
         let erro = validate(req.body, SaveValidate);
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let requestUser = { };
             requestUser.user_id    = req.body.user_id ? Number(req.body.user_id) : undefined;
             requestUser.request_id = req.body.request_id ? Number(req.body.request_id) : undefined;
@@ -65,6 +60,7 @@ module.exports = app => {
                     deleted_at: null,
                     id: requestUser.user_id
                 });
+
             if (findUser && !findUser.length) return res.json({ erro: "User not found!"});
 
             const findScreen = await app.db("request_screen")
@@ -72,6 +68,7 @@ module.exports = app => {
                     deleted_at: null,
                     id: requestUser.request_id
                 });
+
             if (findScreen && !findScreen.length) return res.json({ erro: "Request not found!"});
 
             const findRelationship = await app.db("user_request")
@@ -82,9 +79,7 @@ module.exports = app => {
                 });
 
             if (findRelationship && findRelationship.length) {
-
                 return res.json({ erro: "Request already has this user!" });
-
             }
 
             const response = await app.db("user_request")
@@ -93,16 +88,13 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Request inserted for the user successfull!", screenId: response[0] });
-        
         } catch (error) {
             return res.json({ erro: error });
         }
     };
 
     const onDelete = async (req, res) => {
-
         try {
-
             let userRequest = { id: req.params.id };
             hookDelete(userRequest);
 
@@ -111,10 +103,9 @@ module.exports = app => {
                     deleted_at: null,
                     id: userRequest.id
                 });
+
             if (findUserRequest && !findUserRequest.length) {
-
                 return res.json({ erro: "User Request not found!" });
-
             }
 
             await app.db("user_request")
@@ -127,13 +118,9 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Deleted user request!" });
-
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
-
     };
 
     return {

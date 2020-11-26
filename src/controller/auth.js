@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+const dayjs = require("dayjs");
 const jwt = require("jwt-simple");
 const validate = require("validate.js");
 
@@ -29,17 +30,13 @@ module.exports = app => {
             if (!findUser) return res.json({ erro: "User not found!" });
 
             if (String(req.body.password) !== String(findUser.password)) {
-
                 return res.json({ erro: "User or password not found!" });
-            
             }
 
             const now = Math.floor(Date.now() / 1000);
-            console.log(now);
-
             const payload = {
                 email: findUser.email,
-                exp: (now + 60) * 60 * 24,
+                exp: (now + 60) * 60,
                 iat: now,
                 id: findUser.id,
                 login: findUser.login,
@@ -52,38 +49,23 @@ module.exports = app => {
             });
         
         } catch (error) {
-
             res.send({ aviso: "Request error.", erro: error });
-        
         }
-    
     };
 
     const validateToken = async (req, res) => {
+        let token = req.headers && req.headers.authorization ? req.headers.authorization.replace("Bearer ", "") : null
+        if (token) {
+            let decoded = jwt.decode(String(token), process.env.APP_KEY)
+            const tokenExpirada = String(decoded.exp) < dayjs().format("YYYY-MM-DD HH:mm:ss")
 
-        const userData = req.body || null;
-        try {
-
-            if (userData) {
-
-                const token = jwt.decode(userData.token, process.env.APP_KEY);
-                if (new Date(token.exp * 1000) > new Date()) {
-
-                    return res.send(true);
-                
-                }
-            
+            if (tokenExpirada === false) {
+                return true;
             }
-        
-        } catch (error) {
 
-            return res.json({ erro: error });
-        
+            return false
         }
-        res.send(false);
-    
-    };
+    }
 
     return { login, validateToken };
-
 };

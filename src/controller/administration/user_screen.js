@@ -17,9 +17,7 @@ module.exports = app => {
 
     // listar usuários da tela
     const onListScreensOfUser = async (req, res) => {
-
         try {
-
             await app.db
                 .select(
                     "user_screen.id",
@@ -49,9 +47,7 @@ module.exports = app => {
 
     //listar telas do usuário
     const onListUsersOfScreen = async (req, res) => {
-
         try {
-
             await app.db
                 .select(
                     "user_screen.id",
@@ -70,22 +66,17 @@ module.exports = app => {
                 })
                 .then (resp => res.json({ registros: resp }))
                 .catch( err => res.json({ registros: err }));
-        
+
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
-
     };
 
     const onSave = async (req, res) => {
-
         let erro = validate(req.body, SaveValidate);
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let screenUser = { };
             screenUser.user_id   = req.body.user_id ? Number(req.body.user_id) : undefined;
             screenUser.screen_id = req.body.screen_id ? Number(req.body.screen_id) : undefined;
@@ -96,6 +87,7 @@ module.exports = app => {
                     deleted_at: null,
                     id: screenUser.user_id
                 });
+
             if (findUser && !findUser.length) return res.json({ erro: "User not found!"});
 
             const findScreen = await app.db("screen")
@@ -103,6 +95,7 @@ module.exports = app => {
                     deleted_at: null,
                     id: screenUser.screen_id
                 });
+
             if (findScreen && !findScreen.length) return res.json({ erro: "Screen not found!"});
 
             const findRelationship = await app.db("user_screen")
@@ -113,9 +106,7 @@ module.exports = app => {
                 });
 
             if (findRelationship && findRelationship.length) {
-
                 return res.json({ erro: "User already has this screen!" });
-
             }
 
             const response = await app.db("user_screen")
@@ -124,19 +115,13 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Screen inserted for the user successfull!", screenId: response[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
-
     };
 
     const onDelete = async (req, res) => {
-
         try {
-
             let userScreen = { id: req.params.id };
             hookDelete(userScreen);
 
@@ -145,10 +130,9 @@ module.exports = app => {
                     deleted_at: null,
                     id: userScreen.id
                 });
+
             if (findUserScreen && !findUserScreen.length) {
-
                 return res.json({ erro: "User Screen not found!" });
-
             }
 
             await app.db("user_screen")
@@ -161,13 +145,9 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Deleted user screen!" });
-
         } catch (error) {
-
             return res.json({ erro: error });
-
         }
-
     };
 
     return {

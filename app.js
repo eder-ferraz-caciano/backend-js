@@ -8,7 +8,6 @@ const express = require("express");
 const knex = require("knex");
 const logger = require("knex-logger");
 // const path = require('path');
-
 const app = express();
 
 let database = knex(config);
@@ -43,6 +42,7 @@ consign()
     .include("./src/core/passport.js")
     .then("./src/helpers/usuario.js")
     .then("./src/middleware/knexHook.js")
+    .then("./src/middleware/authorization.js")
     .then("./src/controller/auth.js")
     .then("./src/controller/administration/user.js")
     .then("./src/controller/administration/screen.js")
@@ -54,7 +54,7 @@ consign()
 
 app.get("*", (req, res) => {
     // res.sendFile(path.join(pathPublic, 'index.html'))
-    res.status(400).send({
+    res.status(401).send({
         error: `Invalid access parameter.
     Please check the URL or Type of request.
     Ex: POST, GET, PUT or DELETE.

@@ -32,15 +32,11 @@ module.exports = app => {
    * @return {*} "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
    */
     const criptografarSenha = password => {
-
         return crypto.createHash("sha256").update(password).digest("hex");
-    
     };
 
-    const onList = async (_req, res) => {
-
+    const onList = async (req, res) => {
         try {
-
             const findAllUsers = await app.db("user")
                 .column(
                     "id",
@@ -56,21 +52,15 @@ module.exports = app => {
                 .where({
                     deleted_at: null
                 });
-  
-            return res.json({ registros: findAllUsers });
-        
-        } catch (error) {
 
+            return res.json({ registros: findAllUsers });
+        } catch (error) {
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onView = async (req, res) => {
-
         try {
-
             if (!req.params.id) return res.json({ erro: "Uninformed user!" });
 
             const findUser = await app.db("user")
@@ -93,13 +83,9 @@ module.exports = app => {
             if (findUser && !findUser.length) return res.json({ erro: "User not found!" });
 
             return res.json({ ...findUser[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onSave = async (req, res) => {
@@ -108,7 +94,6 @@ module.exports = app => {
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let user = { ...req.body };
             user.login      = user.login.toUpperCase();
             user.email      = user.email ? user.email : "";
@@ -116,20 +101,18 @@ module.exports = app => {
             user.created_by = user.login;
             user.created_at = dayjs().format("YYYY-MM-DD HH:mm:ss");
             delete user.confirmPassword;
-      
+
             const findUser = await app.db("user")
                 .where({
                     deleted_at: null,
                     email: user.email,
                     login: user.login
                 });
-      
-            if (findUser && findUser.length) {
 
+            if (findUser && findUser.length) {
                 return res.json({
                     erro: `User already registered! <br> Name:${user.name} Login:${user.login} Email:${user.email}`
                 });
-            
             }
 
             const response = await app.db("user")
@@ -138,22 +121,16 @@ module.exports = app => {
                 });
 
             return res.json({ message: "User successfully inserted", userId: response[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onEdit = async (req, res) => {
-
         let erro = validate(req.body, EditValidate);
         if (erro) return res.json({ erro: erro });
 
         try {
-
             let user = { ...req.body };
             user.login      = user.login.toUpperCase();
             user.email      = user.email ? user.email : "";
@@ -181,19 +158,13 @@ module.exports = app => {
                 });
 
             return res.json({ message: "User successfully inserted", userId: response[0] });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     const onDelete = async (req, res) => {
-
         try {
-
             if (!req.params.id) return res.json({ erro: "Uninformed user!" });
 
             let user = { id: req.params.id };
@@ -207,7 +178,6 @@ module.exports = app => {
 
             if (findUser && !findUser.length) return res.json({ erro: "User not found!" });
 
-
             await app.db("user")
                 .where({
                     deleted_at: null,
@@ -218,13 +188,9 @@ module.exports = app => {
                 });
 
             return res.json({ message: "Deleted user!" });
-        
         } catch (error) {
-
             return res.json({ erro: error });
-        
         }
-    
     };
 
     return {
