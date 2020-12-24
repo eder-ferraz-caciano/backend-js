@@ -1,6 +1,6 @@
 module.exports = app => {
     const authorization = async (req, res, next) => {
-        // pesquisa usuário
+    // pesquisa usuário
         const findUser = await app.db("user")
             .where({
                 deleted_at: null,
@@ -26,7 +26,7 @@ module.exports = app => {
                 })
                 .first();
 
-                if (findPermission && findPermission.id) next()
+            if (findPermission && findPermission.id) next()
             else return res.status(401).send("Usuário Sem Permissão")
         } else {
 

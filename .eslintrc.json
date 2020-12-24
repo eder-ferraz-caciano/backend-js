@@ -90,7 +90,7 @@
             "error",
             "beside"
         ],
-        "indent": "error",
+        "indent": ["error", 4],
         "indent-legacy": "error",
         "init-declarations": "error",
         "jsx-quotes": "error",

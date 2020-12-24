@@ -6,7 +6,7 @@ const validate = require("validate.js");
 module.exports = app => {
 
     const userValidate = {
-        login: { presence: { allowEmpty: false } },
+        email: { presence: { allowEmpty: false } },
         password: { presence: { allowEmpty: false } }
     };
 
@@ -17,12 +17,12 @@ module.exports = app => {
 
         try {
 
-            const user = {...req.body};
-            user.login = req.body.login.toUpperCase();
+            const user = { ...req.body };
+            // user.login = req.body.login.toUpperCase();
 
             const findUser = await app.db("user")
                 .where({
-                    login: user.login,
+                    email: user.email,
                     password: user.password
                 })
                 .first();
@@ -47,7 +47,7 @@ module.exports = app => {
                 ...payload,
                 token: jwt.encode(payload, process.env.APP_KEY)
             });
-        
+
         } catch (error) {
             res.send({ aviso: "Request error.", erro: error });
         }
