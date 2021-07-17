@@ -35,7 +35,7 @@ module.exports = app => {
 
       const now = Math.floor(Date.now() / 1000);
       const payload = {
-        login: findUser.login,
+        email: findUser.email,
         exp: (now + 60) * 60,
         iat: now,
         id: findUser.id,
