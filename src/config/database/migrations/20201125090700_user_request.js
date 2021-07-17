@@ -17,6 +17,46 @@ exports.up = function (knex, Promise) {
     table.timestamp("deleted_at").nullable();
   }).then(() => {
     return knex("user_request").insert({ user_id: 1, request_id: 1, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 2, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 3, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 4, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 5, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 6, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 7, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 8, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 9, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 10, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 11, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 12, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 13, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 14, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 15, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 16, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 17, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 18, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 19, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 20, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+  }).then(() => {
+    return knex("user_request").insert({ user_id: 1, request_id: 21, created_by: "MIGRATE SYSTEM", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss") });
   })
 };
 
